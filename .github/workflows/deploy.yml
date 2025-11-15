@@ -1,0 +1,45 @@
+name: Deploy to Production
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Deployment environment'
+        required: true
+        default: 'production'
+        type: choice
+        options:
+          - production
+          - staging
+
+jobs:
+  deploy:
+    name: Deploy to ${{ github.event.inputs.environment }}
+    runs-on: ubuntu-latest
+    environment: ${{ github.event.inputs.environment }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: ${{ secrets.SSH_PORT || 22 }}
+          script: |
+            cd /opt/techlingo-infra
+
+            # Export environment variables for Docker login
+            export GITHUB_TOKEN=${{ secrets.GH_PAT }}
+            export GITHUB_ORG=${{ github.repository_owner }}
+
+            # Run deployment script
+            chmod +x deploy.sh
+            ./deploy.sh
+
+            # Show final status
+            echo "Deployment completed!"
+            docker compose ps

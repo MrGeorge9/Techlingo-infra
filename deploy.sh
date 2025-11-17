@@ -44,7 +44,7 @@ fi
 
 # Pull latest Docker images
 echo -e "${YELLOW}Pulling latest Docker images...${NC}"
-docker compose pull || {
+docker compose pull postgres backend frontend || {
     echo -e "${RED}Failed to pull Docker images!${NC}"
     exit 1
 }

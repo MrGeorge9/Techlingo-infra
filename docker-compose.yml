@@ -7,8 +7,8 @@ services:
     container_name: techlingo-postgres
     restart: unless-stopped
     environment:
-      POSTGRES_DB: ${POSTGRES_DB:-techlingo}
-      POSTGRES_USER: ${POSTGRES_USER:-techlingo_user}
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       PGDATA: /var/lib/postgresql/data/pgdata
     volumes:
@@ -29,7 +29,7 @@ services:
 
   # Backend API (Spring Boot)
   backend:
-    image: ghcr.io/${GITHUB_ORG:-your-org}/techlingo-backend:${BACKEND_TAG:-latest}
+    image: ghcr.io/${GITHUB_ORG}/techlingo-backend:${BACKEND_TAG}
     container_name: techlingo-backend
     restart: unless-stopped
     depends_on:
@@ -37,19 +37,19 @@ services:
         condition: service_healthy
     environment:
       # Database
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/${POSTGRES_DB:-techlingo}
-      SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER:-techlingo_user}
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/${POSTGRES_DB}
+      SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER}
       SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
 
       # JWT
       JWT_SECRET: ${JWT_SECRET}
-      JWT_EXPIRATION: ${JWT_EXPIRATION:-86400000}
+      JWT_EXPIRATION: ${JWT_EXPIRATION}
 
       # Spring profiles
-      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE:-prod}
+      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE}
 
       # Logging
-      LOGGING_LEVEL_SK_TECHLINGO: ${LOG_LEVEL:-INFO}
+      LOGGING_LEVEL_SK_TECHLINGO: ${LOG_LEVEL}
     networks:
       - techlingo-network
     healthcheck:
@@ -66,7 +66,7 @@ services:
 
   # Frontend (React/Vite)
   frontend:
-    image: ghcr.io/${GITHUB_ORG:-your-org}/techlingo-frontend:${FRONTEND_TAG:-latest}
+    image: ghcr.io/${GITHUB_ORG}/techlingo-frontend:${FRONTEND_TAG}
     container_name: techlingo-frontend
     restart: unless-stopped
     networks:
@@ -99,12 +99,12 @@ services:
       - "443:443"
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
-      - ./certs:/etc/nginx/certs:ro
+      - /etc/letsencrypt:/etc/letsencrypt:ro
       - nginx_logs:/var/log/nginx
     networks:
       - techlingo-network
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost/health"]
+      test: ["CMD", "curl", "-fk", "https://localhost/health"]
       interval: 30s
       timeout: 10s
       retries: 3

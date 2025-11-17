@@ -76,8 +76,7 @@ cd /opt/techlingo-infra
 Copy example files and configure:
 
 ```bash
-cp env/.env.backend.example .env
-cp env/.env.postgres.example .env.postgres
+cp env/.env.example .env
 ```
 
 Edit `.env` with your values:
@@ -226,7 +225,7 @@ cd techlingo-infra
 
 ```bash
 # Skopírovanie a úprava .env súboru
-cp env/.env.backend.example .env
+cp env/.env.example .env
 
 # Editácia .env (vim/nano)
 nano .env

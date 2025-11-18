@@ -30,7 +30,7 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: ${{ secrets.SSH_PORT }}
           script: |
-            cd /opt/techlingo-infra
+            cd /opt/Techlingo-infra
 
             # Export environment variables for Docker login
             export GITHUB_TOKEN=${{ secrets.GH_PAT }}
